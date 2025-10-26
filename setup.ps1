@@ -170,7 +170,7 @@ function Require-Admin { param()
 }
 
 function Install-GameMenu { param($cstrikeDir,$url)
-  $resDir = Join-Path $cstrikeDir "resource"
+  $resDir = Join-Path $cstrikeDir "custom/lamateam/resource"
   Ensure-Dir $resDir
   $target = Join-Path $resDir "GameMenu.res"
   Safe-Backup -path $target
@@ -389,3 +389,4 @@ $dirs = Get-CSS-Dirs
 if (-not $dirs) { Write-Host "Counter-Strike: Source not found."; return }
 
 Install-Wizard -dirs $dirs -csvUrl $csvUrl -fastdlUrl $fastdlUrl -gamemenuUrl $gamemenuUrl -autoexecMidHighUrl $autoexecMidHighUrl -autoexecLowMidUrl $autoexecLowMidUrl
+
