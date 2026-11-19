@@ -1,135 +1,68 @@
-# LamaTeam Counter-Strike: Source Setup Tool, Config, Maps, and Gaming Mode Pro
+# LamaTeam Counter-Strike: Source Setup, Config, Maps, and Player Utility
 
-LamaTeam provides a complete **Counter-Strike: Source setup utility** for players who want the fastest way to join the **LamaTeam CS:S server** with the correct config, menu shortcut, custom maps, and performance tuning already in place. If you are searching for a **CS:S autoexec download**, **Counter-Strike: Source map pack**, **CS:S server IP**, **Counter-Strike Source setup tool**, **Counter-Strike Source optimizer**, **CSS FPS boost**, or a **gaming mode tool for CS:S**, this repository is built for that exact use case.
+LamaTeam’s CS:S setup utility helps players prepare their Counter-Strike: Source install, add the LamaTeam server connection, and find missing community maps. This repository keeps the LamaTeam CS:S server information and configuration assets together with the Windows desktop app.
 
-This repository includes:
+## LamaTeam CS:S server
 
-- an optimized `autoexec.cfg`
-- a `GameMenu.res` shortcut for direct server join
-- a Windows installer that detects your CS:S folder and downloads missing maps
-- a desktop **Gaming Mode Pro** tool with a modern tabbed UI, saved selections, and reversible performance tweaks
+- Website: https://lamateam.eu
+- Connect page: https://lamateam.eu/connect
+- Discord: https://dsc.gg/lamateam
+- Server: `82.208.17.101:27516`
+- Steam link: `steam://connect/82.208.17.101:27516`
+- Console command: `connect 82.208.17.101:27516`
 
-The goal is simple: help new and returning players install the right files quickly, reduce failed joins caused by missing maps, and make it easier to reconnect to the LamaTeam server.
+The Modern PC profile installs the current `autoexec.cfg` only. The optional LamaTeam connection adds the `lama` console alias and game-menu entry; both destinations and backups are shown before applying.
 
-## LamaTeam CS:S Server IP and Quick Connect
+## Windows setup
 
-- Website: [https://lamateam.eu](https://lamateam.eu)
-- Connect page: [https://lamateam.eu/connect](https://lamateam.eu/connect)
-- Discord: [https://dsc.gg/lamateam](https://dsc.gg/lamateam)
-- Direct server IP: `82.208.17.101:27516`
-- Steam connect link: `steam://connect/82.208.17.101:27516`
-- In-game console command: `connect 82.208.17.101:27516`
-
-After installing the config, you can also use the console alias:
-
-```cfg
-lama
-```
-
-## One-Command Windows Setup
-
-Open **PowerShell as Administrator** and run:
+Run in an interactive PowerShell session:
 
 ```powershell
 irm lamateam.eu/setup | iex
 ```
 
-The installer will:
+For a local checkout on a WSL network path, run `pwsh -ExecutionPolicy Bypass -NoProfile -File .\setup.ps1`. This Bypass applies only to that PowerShell process; it does not change machine or user policy. The release bootstrap uses the same child-process-only setting after verifying its launcher and app files.
 
-1. detect your Counter-Strike: Source install automatically
-2. install the LamaTeam `autoexec.cfg`
-3. add the LamaTeam server shortcut to the CS:S main menu
-4. download missing LamaTeam maps from fastDL
-5. optionally place the Gaming Mode tool on your desktop
+The graphical app uses **WinUIShell 0.14.0** and requires **PowerShell 7.4 or later** on Windows 10 build 17763+ or Windows 11. If launched from Windows PowerShell 5.1 and PowerShell 7 is missing, setup offers to install Microsoft PowerShell 7.4.22.0 using WinGet and then continues with the commit-pinned app launcher downloaded and verified before it is run. The app requests administrator access through Windows UAC before opening. The PowerShell MSI is machine-wide and may also require administrator approval. If WinGet is unavailable, setup explains how to install PowerShell from Microsoft: https://learn.microsoft.com/powershell/scripting/install/installing-powershell-on-windows.
 
-This makes it a practical **Counter-Strike: Source installer**, **CS:S config installer**, and **CS:S map downloader** in one pass.
+Setup separately asks before installing the pinned WinUIShell module from PowerShell Gallery for the current user. WinUIShell is MIT-licensed and currently marked as a prototype; its APIs may change. The installer verifies fetched app files against the GitHub commit tree before loading them.
 
-If your goal is faster join time and fewer failed connects, this is the recommended path for all LamaTeam players.
+The app detects CS:S automatically; paste a game folder path to use a different install. It offers independent, explicit actions:
 
-When the installer finishes, start CS:S and run:
+- **Modern PC or Legacy config:** inspect the selected config before installation; existing target files are backed up before replacement. Legacy is an exact historical CS:S preset and is not a promise of compatibility with current hardware or every server.
+- **Steam launch options:** current options are preserved, updates are backed up, and Steam is left running. If Steam has cached the old options, it may need a restart before the game uses the change.
+- **Game validation:** validation starts in Steam and is a separate step; after it finishes, click **Apply and play** again to launch and connect.
+- **LamaTeam connect entry:** opt in separately; the app shows the file and backup path first.
+- **Missing maps:** scan first, then download only missing/invalid maps from `https://fastdl.lamateam.eu/maps/`. FastDL serves compressed `.bsp.bz2` files; a locally installed bzip2-capable extractor is required. The app does not download or bundle an extractor. It validates the decompressed BSP before marking it installed.
+- **Gaming cleanup:** inspect apps, services, and scheduled tasks with context; nothing is preselected. Process close requests are graceful only, cannot be restored, and may not close the app. Service/task changes are journaled for retryable restoration.
+- **Intro video:** optional opt-in conversion from `hl2\media\valve.bik` to `hl2\media\valve.webm`. FFmpeg must already be installed; no executable is downloaded, the source is preserved, and an existing output is not silently overwritten.
+- **Config editor:** edit the selected config with syntax highlighting, Ctrl+Z undo, and immediate saves to the detected game’s `cstrike\cfg\autoexec.cfg`. The original file is backed up before the first edit.
 
-```cfg
-exec autoexec
+The app is for CS:S players. LamaTeam connection and maps are optional; it does not promise generic FPS or hit-registration improvements. Clickable **muso.sk** branding stays secondary to setup.
+
+## Manual config files
+
+- `autoexec.cfg` — modern CS:S configuration. Install to `cstrike\cfg\autoexec.cfg` and run `exec autoexec` in the CS:S console.
+- `gamemenu.res` — LamaTeam menu entry. Install to `cstrike\custom\lamateam\resource\GameMenu.res`.
+- The app’s Legacy option is sourced from the repository’s historical 2016 `autoexec.cfg` revision; the retired `config.cfg` containing `unbindall` is not installed.
+
+The app creates timestamped backups in the displayed backup folder. Review the preview and personal settings before replacing an existing config.
+
+## Development checks
+
+```powershell
+pwsh -NoProfile -File core/tests/Invoke-CoreTests.ps1
+pwsh -NoProfile -File core/tests/Invoke-ProcessTests.ps1
+pwsh -NoProfile -File core/tests/Invoke-ContractTests.ps1
+python -B -m unittest discover -s core/tests
+python -B tests/test_bootstrap_static.py
 ```
 
-If the game was already open, reconnect or restart the game client once.
-
-## Gaming Mode Pro for Counter-Strike: Source
-
-The integrated **Gaming Mode** in this installer is a **Windows gaming cleanup and optimization tool for CS:S**. It is designed to free resources before joining the LamaTeam server without blindly killing essential system processes.
-
-Current Gaming Mode features:
-
-- scans background apps, stoppable third-party services, and third-party scheduled tasks
-- lets you add your own protected process names (internal list covers `discord`, `obs`, `teams`, etc.)
-- offers a **Select Recommended** option to quickly mark known non-essential apps for closure
-- stores previous system state so you can restore it after the session
-- applies power plan, network profile, Xbox Game DVR, and DNS cache optimization toggles
-- supports automatic connect to `82.208.17.101:27516` after optimization
-- includes a modern icon-based tabbed interface with persistent checkbox selections
-
-If you only need the Gaming Mode, use the main installer above or run the **Gaming Mode** shortcut created on your desktop after setup.
-
-## Why Players Join Faster with This Tool
-
-- Faster first join to the LamaTeam Counter-Strike: Source server
-- Fewer disconnects caused by missing custom maps
-- A direct CS:S menu shortcut and console alias for repeat joins
-- A cleaner pre-game Windows session with reversible tweaks and restore support
-- One PowerShell setup path for config, menu, maps, and desktop tooling
-- Better conversion from fresh install to in-server play in minutes
-
-## Manual Installation
-
-If you do not want to use the installer, copy the files manually.
-
-### `autoexec.cfg`
-
-1. Download [`autoexec.cfg`](https://raw.githubusercontent.com/musosoft/css-cfg/main/autoexec.cfg)
-2. Place it in:
-
-```text
-C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Source\cstrike\cfg
-```
-
-3. Run `exec autoexec` in the CS:S console
-
-### `GameMenu.res`
-
-1. Download [`gamemenu.res`](https://raw.githubusercontent.com/musosoft/css-cfg/main/gamemenu.res)
-2. Place it in:
-
-```text
-C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Source\cstrike\custom\lamateam\resource
-```
-
-### Gaming Mode
-
-1. Run the installer as Administrator.
-2. Select **Create a Gaming Mode shortcut on the desktop**.
-3. Use the desktop shortcut to launch the tool before gaming.
-
-## Why Use This LamaTeam CS:S Pack
-
-- Faster onboarding for new players joining the LamaTeam Counter-Strike: Source server
-- Automatic delivery of missing maps before you connect
-- A direct menu shortcut and console alias for faster reconnects
-- A practical Windows cleanup tool focused on gaming sessions, not generic “optimizer” nonsense
-- Backups of replaced files during setup so you can roll back if needed
+The tests use temporary files and fake network/system adapters; they do not stop real processes or change Windows state. WinUIShell GUI, WinGet/UAC installation, Windows service/task actions, real FFmpeg conversion, and end-to-end public setup still require Windows validation. The public `lamateam.eu/setup` endpoint must serve the updated `main` branch before this branch’s app is available through that URL.
 
 ## Community
 
-- Website: [https://lamateam.eu](https://lamateam.eu)
-- Connect: [https://lamateam.eu/connect](https://lamateam.eu/connect)
-- Discord: [https://dsc.gg/lamateam](https://dsc.gg/lamateam)
-
-For players searching terms like **Counter-Strike Source server config**, **CS:S public server connect**, **CS:S setup utility**, **download CS:S custom maps**, **LamaTeam autoexec**, **gaming mode for Counter-Strike: Source**, or **how to join LamaTeam CS:S**, this repository is the official install point.
-
-Ready to join now:
-
-- Run `irm lamateam.eu/setup | iex`
-- Launch `LamaTeam-GamingMode` from your desktop
-- Click **Select Recommended** on the Kill tab
-- Click **Close Selected**
-- Switch to **Tweaks** tab and click **Apply Gaming Mode**
-- Launch CS:S and join `82.208.17.101:27516`
+- LamaTeam: https://lamateam.eu
+- Connect: https://lamateam.eu/connect
+- Discord: https://dsc.gg/lamateam
+- Creator: [muso.sk](https://muso.sk)
